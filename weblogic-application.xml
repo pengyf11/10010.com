@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<weblogic-application>
+    <prefer-application-packages>
+        <package-name>okhttp3.*</package-name>
+    </prefer-application-packages>
+</weblogic-application>
