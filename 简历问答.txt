@@ -1,0 +1,112 @@
+Dubbo
+节点角色说明：
+
+Provider: 暴露服务的服务提供方。
+
+Consumer: 调用远程服务的服务消费方。
+
+Registry: 服务注册与发现的注册中心。
+
+Monitor: 统计服务的调用次调和调用时间的监控中心。
+
+Container: 服务运行容器。
+
+  互联网的发展，网站应用的规模不断扩大，常规的垂直应用架构已无法应对，分布式服务架构以及流动计算架构势在必行，
+  Dubbo是一个分布式服务框架，在这种情况下诞生的。现在核心业务抽取出来，作为独立的服务，使前端应用能更快速和稳定的响应。
+  
+  
+  
+  Zookeeper
+  
+  Zookeeper作为Dubbo服务的注册中心，Dubbo原先基于数据库的注册中心，没采用Zookeeper，Zookeeper一个分布式的服务框架，
+  是树型的目录服务的数据存储，能做到集群管理数据 ，这里能很好的作为Dubbo服务的注册中心，
+  Dubbo能与Zookeeper做到集群部署，当提供者出现断电等异常停机时，
+  Zookeeper注册中心能自动删除提供者信息，当提供者重启时，能自动恢复注册数据
+  
+  
+  
+  maven
+mvn archetype：create 创建Maven项目
+mvn compile 编译源代码
+mvn deploy 发布项目
+mvn test-compile 编译测试源代码
+mvn test 运行应用程序中的单元测试
+mvn site 生成项目相关信息的网站
+mvn clean 清除项目目录中的生成结果
+mvn package 根据项目生成的jar
+mvn install 在本地Repository中安装jar
+mvn eclipse:eclipse 生成eclipse项目文件
+mvnjetty:run 启动jetty服务
+mvntomcat:run 启动tomcat服务
+mvn clean package -Dmaven.test.skip=true:清除以前的包后重新打包，跳过测试类
+
+
+
+
+hibernate中如何实现乐观锁：
+
+前提：在现有表当中增加一个冗余字段，version版本号, long类型
+
+原理：
+
+1）只有当前版本号》=数据库表版本号，才能提交
+
+2）提交成功后，版本号version ++
+update account set price = #price #,version=version+1
+
+                              where id=#id# and version=#vsersion#
+
+
+
+oracle中一张表的记录数超过100w后 查询性能就很差了，如何保证系统性能？
+
+再比如，中国移动有上亿的用户量，表如何设计？把所有用于存在于一个表么？
+
+所以，大数量的系统，必须考虑表拆分-（表名字不一样，但是结构完全一样），通用的几种方式：（视情况而定）
+
+1）按业务分，比如 手机号的表，我们可以考虑 130开头的作为一个表，131开头的另外一张表 以此类推
+
+2）利用oracle的表拆分机制做分表
+
+3）如果是交易系统，我们可以考虑按时间轴拆分，当日数据一个表，历史数据弄到其它表。这里历史数据的报表和查询不会影响当日交易。
+
+当然，表拆分后我们的应用得做相应的适配。单纯的or-mapping也许就得改动了。比如部分业务得通过存储过程等
+
+
+服务器不可能为每一个请求都创建线程，得考虑到最大负载，当达到临界值的时候，服务器返回繁忙状态，拒绝服务即可，当然这是简单的处理办法。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+用户体验：这里的体验不只是界面多么漂亮，功能多么顺手，这里的体验指程序的响应速度，响应速度越快，用户体验越好。
+
+
+
+
+
+
+事务特性
+
+
+
+        原子性（Atomicity）：事务是一个原子操作，由一系列动作组成。事务的原子性确保动作要么全部完成，要么完全不起作用。
+        一致性（Consistency）：一旦事务完成（不管成功还是失败），系统必须确保它所建模的业务处于一致的状态，而不会是部分完成部分失败。在现实中的数据不应该被破坏。
+        隔离性（Isolation）：可能有许多事务会同时处理相同的数据，因此每个事务都应该与其他事务隔离开来，防止数据损坏。
+        持久性（Durability）：一旦事务完成，无论发生什么系统错误，它的结果都不应该受到影响，这样就能从任何系统崩溃中恢复过来。通常情况下，事务的结果被写到持久化存储器中。
+
+		
+		
+		oracle伪分页
+		
+		 select * from ( select rownum rn,city_name,city_code  from ( select * from tf_m_city ) where rownum <30 ) t1 where t1.rn>20
+
