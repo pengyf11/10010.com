@@ -4,3 +4,30 @@
         <package-name>okhttp3.*</package-name>
     </prefer-application-packages>
 </weblogic-application>
+
+
+War应用类库预先加载方法：
+
+（1）将war包打入ear包中，当然还需要有META-INF文件，带有weblogic-application.xml和application.xml，主要就是在weblogic-application.xml中配置prefer-application-packages，如下：
+
+<weblogic-application> 
+  <prefer-application-packages> 
+     <package-name>antlr.*</package-name> 
+  </prefer-application-packages> 
+</weblogic-application> 
+
+（2）在weblogic.xml中配置，如下：
+<container-descriptor>
+       <prefer-web-inf-classes>true</prefer-web-inf-classes>
+</container-descriptor>
+
+参考weblogic的说明，如下：
+（1）加载类
+类加载器在加载类时使用委托模型。类加载器实现首先检查其缓存，查看是否已经加载所请求的类。由于不重复从磁盘中加载类，而是使用该类在缓存内存中的副本，所以，这种类验证可以提高性能。如果在类缓存中找不到该类，则当前类加载器会要求其父类加载器提供该类。仅当父类加载器也无法加载该类时，该类加载器才会尝试加载该类。如果某个类既存在于父类加载器中，又存在于子类加载器中，则将加载父类加载器中的类。遵循这种委托模型可以避免同时加载多份相同的类。加载多份相同的类会引发 ClassCastException。
+
+类加载器会先要求其父加载器加载类，然后再尝试自己加载该类。可以对 WebLogic Server 中与Web 应用程序关联的类加载器进行配置，使其首先在本地进行检查，然后再要求其父类加载器提供该类。这样，Web 应用程序能够使用其自己版本的第三方类，这些类也可能包含于 WebLogic Server 产品中。prefer-web-inf-classes 元素部分将详细讨论。
+
+（2）prefer-web-inf-classes 元素
+weblogic.xml Web 应用程序部署描述符中包含 <prefer-web-inf-classes> 元素（<container-descriptor> 元素的子元素）。默认情况下，该元素设置为 False。将该元素设置为 True 会颠反类加载器委托模型，以便优先加载 Web 应用程序中的类定义，其次才加载更高一级的类加载器中的类定义。这使得 Web 应用程序能够使用自己版本的第三方类，这些类也可能包含于 WebLogic Server 中。请参阅 weblogic.xml 部署描述符元素。
+
+使用此功能时必须谨慎，不要混淆通过 Web 应用程序类定义创建的实例与通过服务器定义创建的实例。如果混淆这些实例，则会引发 ClassCastException。
